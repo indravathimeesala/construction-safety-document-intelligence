@@ -6,6 +6,7 @@ from utils.docx_reader import extract_docx_text
 from utils.txt_reader import extract_txt_text
 from utils.text_preprocessing import preprocess_text
 from utils.database import create_database, insert_document
+from utils.search import search_keyword
 
 app = Flask(__name__)
 
@@ -75,7 +76,23 @@ def upload():
 
     <pre>{chunks[0] if chunks else 'No text found in the document.'}</pre>
     """
+@app.route("/search")
+def search_page():
+    return render_template("search.html")
 
+
+@app.route("/search", methods=["POST"])
+def search():
+
+    keyword = request.form["keyword"]
+
+    results = search_keyword(keyword.lower())
+
+    return render_template(
+        "search.html",
+        results=results,
+        searched=True
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)
